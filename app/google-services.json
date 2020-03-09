@@ -1,79 +1,42 @@
 {
   "project_info": {
-    "project_number": "533186917929",
-    "firebase_url": "https://kotlinmvvmproject-97072.firebaseio.com",
-    "project_id": "kotlinmvvmproject-97072",
-    "storage_bucket": "kotlinmvvmproject-97072.appspot.com"
+    "project_number": "321669271056",
+    "firebase_url": "https://firestoreapitest.firebaseio.com",
+    "project_id": "firestoreapitest",
+    "storage_bucket": "firestoreapitest.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:533186917929:android:60f838da771386dc754e38",
+        "mobilesdk_app_id": "1:321669271056:android:2c467ca884de4cdb17c495",
         "android_client_info": {
           "package_name": "com.example.firestoretest"
         }
       },
       "oauth_client": [
         {
-          "client_id": "533186917929-ujnho5o9dnnroufce4c6iqkejiuptruv.apps.googleusercontent.com",
+          "client_id": "321669271056-4rht9t3ojdu3ngj42fok4h8bbajr9bnf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.firestoretest",
-            "certificate_hash": "63a254dba8175d1e8808f3a3f35c0ad571a6a679"
+            "certificate_hash": "9be1fd91c6795b583fc86d5178e230f5ae992b1d"
           }
         },
         {
-          "client_id": "533186917929-p9tflibs3ge038dap78tv7jmbfm2b466.apps.googleusercontent.com",
+          "client_id": "321669271056-ds9krlrm9ln7vommirn3o8ckmlm6ucbn.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCyBsVvE0GLfQn7hNs3KLX5prXCkmjw03c"
+          "current_key": "AIzaSyBYGY1Hrh5fy17pi-8pKfWNTV4sAzJbimM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "533186917929-p9tflibs3ge038dap78tv7jmbfm2b466.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:533186917929:android:4b5f5ccbdefcfdb2754e38",
-        "android_client_info": {
-          "package_name": "com.example.kotlinmvvmproject"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "533186917929-a5d5h119ji1j5rbgvoflnjo0qegeg56d.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.kotlinmvvmproject",
-            "certificate_hash": "fd4eb91e0ad6ee9213eade4f9d0130281696bcef"
-          }
-        },
-        {
-          "client_id": "533186917929-p9tflibs3ge038dap78tv7jmbfm2b466.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCyBsVvE0GLfQn7hNs3KLX5prXCkmjw03c"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "533186917929-p9tflibs3ge038dap78tv7jmbfm2b466.apps.googleusercontent.com",
+              "client_id": "321669271056-ds9krlrm9ln7vommirn3o8ckmlm6ucbn.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
