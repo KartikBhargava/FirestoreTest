@@ -1,62 +1,69 @@
 package com.example.firestoretest
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
-import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.Toast
-import com.google.firebase.firestore.FirebaseFirestore
-import java.util.HashMap
+import android.widget.Toast.*
+import com.google.gson.Gson
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-    var fb = FirebaseFirestore.getInstance()
-    var data :HashMap<String, String> = HashMap<String, String>()
-    lateinit var button : Button
+    lateinit var button: Button
+    lateinit var locations_broadcast: BroadcastReceiver
+    var location_hashmap: HashMap<String, ArrayList<region>> = HashMap<String, ArrayList<region>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         button = findViewById(R.id.button)
-
-        data.put("name", "Kartik")
-        data.put("Hello", "Hello")
-        fb.collection("Location").document("27").collection("273001").document("8174033803").set(data as Map<String, Any>)
-        fb.collection("Location")
-            .get()
-            .addOnSuccessListener {
-                it.forEach {
-                    var id = it.id
-                    fb.collection("Location").document(id).get().addOnSuccessListener { i1t ->
-                        var id2 = i1t.id
-                        Toast.makeText(this,id2 , Toast.LENGTH_SHORT).show()
+        ForegroundService.startService(this, "Start Service")
+        locations_broadcast = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                makeText(this@MainActivity, "recieved", LENGTH_SHORT).show()
+                ForegroundService.stopService(this@MainActivity)
+              //  location_hashmap =
+              //      intent.getSerializableExtra("map") as HashMap<String, ArrayList<region>>
+              //  var gson = Gson()
+              //  var jsonobject = gson.toJson(location_hashmap)
+             //   val file: String = "FireStoreTest"
+                button.setOnClickListener {
+                    val fileOutputStream: FileOutputStream
+                    try {
+                  //      fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE)
+                   //     fileOutputStream.write(data.toByteArray())
+                    } catch (e: FileNotFoundException) {
+                        e.printStackTrace()
+                    } catch (e: NumberFormatException) {
+                        e.printStackTrace()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
-
             }
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        button.setOnClickListener {
-            fb.collection("Location")
-                .get()
-                .addOnSuccessListener {
-                    for(document in it) {
-                        var id = document.id
-                        fb.collection("Location").document(id).get().addOnSuccessListener { i1t ->
-                            var id2 = i1t.id
-                            Toast.makeText(this,id2 , Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                }
         }
+        val filter = IntentFilter()
+        filter.addAction("me.proft.sendbroadcast")
+        registerReceiver(locations_broadcast, filter)
+
     }
 
     override fun onPause() {
         super.onPause()
         button.setOnClickListener(null)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(locations_broadcast)
     }
 }
