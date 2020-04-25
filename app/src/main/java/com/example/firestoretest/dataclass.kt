@@ -1,6 +1,7 @@
 package com.example.firestoretest
 
 import android.os.Parcelable
+import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
@@ -23,8 +24,7 @@ data class User(
 @Parcelize
 data class lat_long(
     @SerializedName("id") val id: String?,
-    @SerializedName("latitude") val latitude: Double?,
-    @SerializedName("longitude") val longitude: Double?
+    @SerializedName("latLng") val latLng: LatLng?
 
 ) : Parcelable
 

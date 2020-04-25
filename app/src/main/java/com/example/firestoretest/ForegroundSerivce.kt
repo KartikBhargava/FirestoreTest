@@ -10,21 +10,27 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.ktx.toObject
 
 class ForegroundService : Service() {
     private val CHANNEL_ID = "ForegroundService Kotlin"
     var list_user: ArrayList<User> = ArrayList<User>()
     var user: User? = null
-    var latLong: lat_long? = null
+    private var latLong: lat_long? = null
     var locationType: location_type? = null
     var pincode: pincode? = null
     var region: region? = null
-    var check: Boolean? = false
-    var list_lat_long: ArrayList<lat_long> = ArrayList<lat_long>()
-    var list_location_type: ArrayList<location_type> = ArrayList<location_type>()
-    var list_pinCode: ArrayList<pincode> = ArrayList<pincode>()
-    var list_region: ArrayList<region> = ArrayList<region>()
+    var hashMapUserDetails: HashMap<String, User> = HashMap<String, User>()
+    var hashMapLatLong: HashMap<String, lat_long> = HashMap<String, lat_long>()
+    var hashMapLocationType: HashMap<String, HashMap<String, lat_long>> =
+        HashMap<String, HashMap<String, lat_long>>()
+    var hashMapPincode: HashMap<String, HashMap<String, HashMap<String, lat_long>>> =
+        HashMap<String, HashMap<String, HashMap<String, lat_long>>>()
+    var hashMapRegion: HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>> =
+        HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>()
+    var hashMapLocation: HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>> =
+        HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>>()
 
     companion object {
         fun startService(context: Context, message: String) {
@@ -41,58 +47,67 @@ class ForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //do heavy work on a background thread
-        FirebaseUtil().fb.collection("Location").get().addOnSuccessListener { it1 ->
+        FirebaseUtil.fb.collection("Location").get().addOnSuccessListener { it1 ->
             for (document in it1!!) {
-                val id = document.id
-                FirebaseUtil().fb.collection("Location").document(id).collection("pincodes")
+                val regionID = document.id
+                FirebaseUtil.fb.collection("Location").document(regionID).collection("pincodes")
                     .get()
                     .addOnSuccessListener { result ->
                         for (document1 in result!!) {
-                            val id1 = document1.id
-                            FirebaseUtil().fb.collection("Location").document(id)
+                            val pinCodeID = document1.id
+                            FirebaseUtil.fb.collection("Location").document(regionID)
                                 .collection("pincodes")
-                                .document(id1).collection("type")
+                                .document(pinCodeID).collection("type")
                                 .get().addOnSuccessListener {
                                     for (document2 in it!!) {
-                                        val id2 = document2.id
-                                        FirebaseUtil().fb.collection("Location").document(id)
+                                        val typeOfLocationID = document2.id
+                                        FirebaseUtil.fb.collection("Location").document(regionID)
                                             .collection("pincodes")
-                                            .document(id1).collection("type").document(id2)
+                                            .document(pinCodeID).collection("type")
+                                            .document(typeOfLocationID)
                                             .collection("users")
-                                            .get().addOnSuccessListener {
-                                                for (document3 in it) {
-                                                    val id3 = document3.id
-                                                    val long: Double =
-                                                        document3.data.get("Longitude") as Double
-                                                    val lat: Double =
-                                                        document3.data.get("Latitude") as Double
-                                                    latLong =
-                                                        lat_long(id2, lat, long)
-                                                    list_lat_long.add(latLong!!)
+                                            .get().addOnCompleteListener {
+                                                if (it.isSuccessful) {
+                                                    for (document3 in it.result!!) {
+                                                        val userID = document3.id
+                                                        fetchUserData(userID)
+                                                        val long: Double =
+                                                            document3.data.get("Longitude") as Double
+                                                        val lat: Double =
+                                                            document3.data.get("Latitude") as Double
+                                                        val latLng = LatLng(lat, long)
+                                                        latLong = lat_long(userID, latLng)
+                                                        hashMapLatLong[userID] = latLong!!
+                                                    }
+                                                    hashMapLocation.put("Location", hashMapRegion)
+                                                    val broadcastIntent = Intent()
+                                                    broadcastIntent.action =
+                                                        "me.proft.sendbroadcast"
+                                                    broadcastIntent.putExtra("hashMapLocation", hashMapLocation)
+                                                    sendBroadcast(broadcastIntent)
                                                 }
                                             }
                                             .addOnFailureListener {
                                                 latLong = null
                                             }
-                                        locationType = location_type(id2, latLong)
-                                        list_location_type.add(locationType!!)
+
+                                        hashMapLocationType[typeOfLocationID] = hashMapLatLong
                                     }
                                 }.addOnFailureListener {
                                     locationType = null
                                 }
-                            pincode = pincode(locationType, id1)
-                            list_pinCode.add(pincode!!)
+
+                            hashMapPincode[pinCodeID] = hashMapLocationType
                         }
                     }.addOnFailureListener {
                         pincode = null
                     }
-                region = region(pincode, id)
-                list_region.add(region!!)
+                hashMapRegion[regionID] = hashMapPincode
             }
         }
             .addOnFailureListener {
-            region = null
-        }
+                region = null
+            }
         val input = intent?.getStringExtra("inputExtra")
         createNotificationChannel()
         val notificationIntent = Intent(this, MainActivity::class.java)
@@ -109,22 +124,11 @@ class ForegroundService : Service() {
         return START_STICKY
     }
 
-    private fun add_data() {
-        for (user in list_user)
-        {
-
+    private fun fetchUserData(userID: String) {
+        FirebaseUtil.fb.collection("Users").document(userID).get().addOnSuccessListener {
+            user = it.toObject<User>()
+            hashMapUserDetails[userID] = user!!
         }
-    }
-
-    private fun send() {
-        val intent2 = Intent()
-        intent2.action = "me.proft.sendbroadcast"
-        intent2.putExtra("list_user", list_user)
-        intent2.putExtra("list_lat_long", list_lat_long)
-        intent2.putExtra("list_user", list_location_type)
-        intent2.putExtra("list_pinCode", list_pinCode)
-        intent2.putExtra("list_region", list_region)
-        sendBroadcast(intent2)
     }
 
     override fun onBind(intent: Intent?): IBinder? {

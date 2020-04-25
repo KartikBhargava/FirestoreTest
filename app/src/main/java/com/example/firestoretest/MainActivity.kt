@@ -5,20 +5,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
-import android.widget.Toast
-import android.widget.Toast.*
+import android.widget.Toast.LENGTH_SHORT
+import android.widget.Toast.makeText
+import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
-import java.io.FileNotFoundException
+import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var button: Button
     lateinit var locations_broadcast: BroadcastReceiver
-    var location_hashmap: HashMap<String, ArrayList<region>> = HashMap<String, ArrayList<region>>()
+    var hashMapLocation: HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>> =
+        HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,41 +30,40 @@ class MainActivity : AppCompatActivity() {
             override fun onReceive(context: Context, intent: Intent) {
                 makeText(this@MainActivity, "recieved", LENGTH_SHORT).show()
                 ForegroundService.stopService(this@MainActivity)
-              //  location_hashmap =
-              //      intent.getSerializableExtra("map") as HashMap<String, ArrayList<region>>
-              //  var gson = Gson()
-              //  var jsonobject = gson.toJson(location_hashmap)
-             //   val file: String = "FireStoreTest"
+                hashMapLocation =
+                    intent.getSerializableExtra("hashMapLocation") as HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>>
+                var gson = Gson()
+                var jsonFile = gson.toJson(hashMapLocation)
                 button.setOnClickListener {
-                    val fileOutputStream: FileOutputStream
-                    try {
-                  //      fileOutputStream = openFileOutput(file, Context.MODE_PRIVATE)
-                   //     fileOutputStream.write(data.toByteArray())
-                    } catch (e: FileNotFoundException) {
-                        e.printStackTrace()
-                    } catch (e: NumberFormatException) {
-                        e.printStackTrace()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    //Get your FilePath and use it to create your File
+                    //Get your FilePath and use it to create your File
+                    val yourFilePath: String = "$filesDir/FireStoreTest"
+                    val yourFile = File(yourFilePath)
+//Create your FileOutputStream, yourFile is part of the constructor
+                    val fileOutputStream = FileOutputStream(yourFile)
+                    makeText(this@MainActivity, "recieved", LENGTH_SHORT).show()
+//Convert your JSON String to Bytes and write() it
+                    fileOutputStream.write(jsonFile.toByteArray())
+//Finally flush and close your FileOutputStream
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+//make sure this is in a try catch statement
                 }
             }
         }
-        val filter = IntentFilter()
-        filter.addAction("me.proft.sendbroadcast")
-        registerReceiver(locations_broadcast, filter)
+                val filter = IntentFilter()
+                filter.addAction("me.proft.sendbroadcast")
+                registerReceiver(locations_broadcast, filter)
 
-    }
+            }
 
-    override fun onPause() {
-        super.onPause()
-        button.setOnClickListener(null)
-    }
+            override fun onPause() {
+                super.onPause()
+                button.setOnClickListener(null)
+            }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(locations_broadcast)
-    }
-}
+            override fun onDestroy() {
+                super.onDestroy()
+                unregisterReceiver(locations_broadcast)
+            }
+        }
