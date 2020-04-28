@@ -17,8 +17,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var button: Button
     lateinit var locations_broadcast: BroadcastReceiver
-    var hashMapLocation: HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>> =
-        HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>>()
+    private var hashMapLocation: HashMap<String, ArrayList<HashMap<String, HashMap<String, HashMap<String, UserObj>>>> > =
+        HashMap()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
             override fun onReceive(context: Context, intent: Intent) {
                 makeText(this@MainActivity, "recieved", LENGTH_SHORT).show()
                 ForegroundService.stopService(this@MainActivity)
-                hashMapLocation =
-                    intent.getSerializableExtra("hashMapLocation") as HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, lat_long>>>>>
+             hashMapLocation =
+                  intent.getSerializableExtra("Location") as HashMap<String, ArrayList<HashMap<String, HashMap<String, HashMap<String, UserObj>>>> >
                 var gson = Gson()
                 var jsonFile = gson.toJson(hashMapLocation)
                 button.setOnClickListener {

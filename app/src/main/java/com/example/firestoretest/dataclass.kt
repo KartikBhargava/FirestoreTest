@@ -17,14 +17,20 @@ data class User(
     @SerializedName("name") var name: String? = null,
     @SerializedName("age") var age: String? = null,
     @SerializedName("expertise") var expertise: String? = null,
-    @SerializedName("email") var email: String? = null,
+    @SerializedName("Email") var Email: String? = null,
     @SerializedName("profession") var profession: String? = null
 ) : Parcelable
 
 @Parcelize
-data class lat_long(
-    @SerializedName("id") val id: String?,
+data class UserObj(
+    @SerializedName("User") val User: User?,
     @SerializedName("latLng") val latLng: LatLng?
+) : Parcelable
+
+@Parcelize
+data class lat_long(
+    @SerializedName("Latitude") val latitude: Double? = null,
+    @SerializedName("Longitude") val longitude: Double? = null
 
 ) : Parcelable
 
